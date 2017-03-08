@@ -3,8 +3,36 @@ package memorobot;
 use strict;
 use warnings;
 
-use constant DICT_PATH => 'dict.tsv';
-use constant OBEY_PATH => 'obey.tsv';
+my $DICT_PATH = 'dict.tsv';
+my $OBEY_PATH = 'obey.tsv';
+
+sub get_obey_path {
+	return $OBEY_PATH;
+}
+
+sub set_obey_path {
+	shift;
+	my $obey_path = sanitize_string(shift);
+	print("set_obey_path '$obey_path'\n");
+	if (!length($obey_path)) {
+		return;
+	}
+	$OBEY_PATH = $obey_path;
+}
+
+sub get_dict_path {
+	return $DICT_PATH;
+}
+
+sub set_dict_path {
+	shift;
+	my $dict_path = sanitize_string(shift);
+	print("set_dict_path '$dict_path'\n");
+	if (!length($dict_path)) {
+		return;
+	}
+	$DICT_PATH = $dict_path;
+}
 
 sub parse_input {
 	shift;
@@ -68,7 +96,7 @@ sub remove_memo {
 			push(@new_memos, $memo);
 		}
 	}
-	open(DICT_FILE, '>', DICT_PATH);
+	open(DICT_FILE, '>', get_dict_path());
 	print DICT_FILE @new_memos;
 	close(DICT_FILE);
 	return "Removed '$term'";
@@ -80,7 +108,7 @@ sub add_memo {
 	if (find_memo($term)) {
 		return "'$term' already exists";
 	}
-	open(DICT_FILE, '>>', DICT_PATH);
+	open(DICT_FILE, '>>', get_dict_path());
 	print DICT_FILE "$term\t$text\n";
 	close(DICT_FILE);
 	return "Added '$term'";
@@ -102,7 +130,7 @@ sub find_memo {
 
 sub get_memos {
 	my @memos;
-	open(DICT_FILE, '<', DICT_PATH);
+	open(DICT_FILE, '<', get_dict_path());
 	@memos = <DICT_FILE>;
 	close(DICT_FILE);
 	return @memos;
@@ -120,7 +148,7 @@ sub remove_supervisor {
 			push(@new_supervisors, $supervisor);
 		}
 	}
-	open(OBEY_FILE, '>', OBEY_PATH);
+	open(OBEY_FILE, '>', get_obey_path());
 	print OBEY_FILE @new_supervisors;
 	close(OBEY_FILE);
 	return "$nickname is no longer my supervisor";
@@ -134,7 +162,7 @@ sub add_supervisor {
 	if (find_supervisor($nickname)) {
 		return "$nickname is already my supervisor";
 	}
-	open(OBEY_FILE, '>>', OBEY_PATH);
+	open(OBEY_FILE, '>>', get_obey_path());
 	print OBEY_FILE "$nickname\n";
 	close(OBEY_FILE);
 	return "$nickname is now my supervisor";
@@ -156,7 +184,7 @@ sub find_supervisor {
 
 sub get_supervisors {
 	my @supervisors;
-	open(OBEY_FILE, '<', OBEY_PATH);
+	open(OBEY_FILE, '<', get_obey_path());
 	@supervisors = <OBEY_FILE>;
 	close(OBEY_FILE);
 	return @supervisors;

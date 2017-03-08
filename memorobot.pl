@@ -18,12 +18,16 @@ init(@ARGV);
 
 sub init {
 	if (scalar(@_) < 4) {
-		die("Usage: $0 <server> <port> <nickname> \"<#channel1,#channel2,#etc>\"\n");
+		die("Usage: $0 <server> <port> <nickname> \"<#channel1,#channel2,#etc>\" [./path/to/obey.tsv] [./path/to/dict.tsv]\n");
 	}
 	my $server = shift;
 	my $port = shift;
 	my $nickname = shift;
 	my @channels = parse_channels(shift);
+	my $obey_path = shift;
+	my $dict_path = shift;
+	memorobot->set_dict_path($dict_path);
+	memorobot->set_obey_path($obey_path);
 	my $socket = IO::Socket::INET->new(
 		PeerAddr => $server,
 		PeerPort => $port,
