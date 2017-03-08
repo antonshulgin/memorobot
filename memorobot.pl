@@ -6,7 +6,15 @@ use warnings;
 use IO::Socket;
 use memorobot;
 
-init(@ARGV);
+lookup(@ARGV);
+
+sub lookup {
+	my $input = join(" ", @_);
+	my $result = memorobot->parse_input($input);
+	print(">>> $result\n");
+}
+
+#init(@ARGV);
 
 sub init {
 	if (scalar(@_) < 4) {
