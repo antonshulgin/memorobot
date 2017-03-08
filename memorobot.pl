@@ -6,15 +6,15 @@ use warnings;
 use IO::Socket;
 use memorobot;
 
-lookup(@ARGV);
+#lookup(@ARGV);
 
-sub lookup {
-	my $input = join(" ", @_);
-	my $result = memorobot->parse_input($input);
-	print(">>> $result\n");
-}
+#sub lookup {
+	#my $input = join(" ", @_);
+	#my $result = memorobot->parse_input($input);
+	#print(">>> $result\n");
+#}
 
-#init(@ARGV);
+init(@ARGV);
 
 sub init {
 	if (scalar(@_) < 4) {
@@ -42,20 +42,25 @@ sub dispatch {
 	my $socket = shift;
 	my $nickname = shift;
 	my $sender;
+	my $channel;
 	my $message;
 	my $response;
+	my $pattern_ping = qr/^PING\s+\:([\w.]+)/;
+	my $pattern_privmsg = qr/^\:([^\!]+).+PRIVMSG\s+(\S+)\s+\:${nickname}\W?\s*(.+)$/;
 	while (my $message = <$socket>) {
-		if ($message =~ /^PING\s+\:([\w.]+)/) {
+		if ($message =~ $pattern_ping) {
 			print $socket "PONG $1\n";
 			print "Ping? Pong.\n";
 		}
-		if ($message =~ /^\S+\s+PRIVMSG\s+(\S+)\s+\:${nickname}\W?\s*(.+)$/) {
+		if ($message =~ $pattern_privmsg) {
 			$sender = $1;
-			$message = $2;
+			$channel = $2;
+			$message = $3;
 			$message =~ s/^\s*|\s*$//;
-			$response = memorobot->parse_input($message);
+			print "'$sender' -> '$channel': '$message'\n";
+			$response = memorobot->parse_input($message, $sender);
 			if (defined($response)) {
-				print $socket "PRIVMSG $sender :$response\n";
+				print $socket "PRIVMSG $channel :$response\n";
 			}
 		}
 	}

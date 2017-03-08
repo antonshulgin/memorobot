@@ -8,6 +8,7 @@ use constant DICT_PATH => 'dict.tsv';
 sub parse_input {
 	shift;
 	my $input = sanitize_string(shift);
+	my $sender = sanitize_string(shift);
 	if (!length($input)) {
 		return "no stuff to parse";
 	}
@@ -27,7 +28,7 @@ sub parse_command {
 	if ($command =~ m/^remove$/i) {
 		return remove_memo($params);
 	}
-	return "No"
+	return "No";
 }
 
 sub lookup {
