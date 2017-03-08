@@ -45,8 +45,7 @@ sub dispatch {
 			$sender = $1;
 			$message = $2;
 			$message =~ s/^\s*|\s*$//;
-			print "*** message from $sender: $message\n";
-			$response = memorobot->parse($message);
+			$response = memorobot->parse_input($message);
 			if (defined($response)) {
 				print $socket "PRIVMSG $sender :$response\n";
 			}

@@ -5,22 +5,22 @@ use warnings;
 
 use constant DICT_FILENAME => 'dict.tsv';
 
-sub parse {
+sub parse_input {
 	shift;
-	my $query = sanitize(@_);
-	if (!length($query)) {
+	my $input = sanitize_string(shift);
+	if (!length($input)) {
 		return "no stuff to parse";
 	}
-	if (is_command($query)) {
-		return parse_command($query);
+	if (is_command($input)) {
+		return parse_command($input);
 	}
-	return find_memo($query);
+	return find_memo($input);
 }
 
 sub parse_command {
 	my @input = split(" ", shift);
 	my $command = join(" ", @input);
-	my $command_pattern_add = '^@add\s+([^\:]+)\:(.+)$';
+	my $command_pattern_add = '^@add\s+([0-9a-z\-_]+)\s+(.+)$';
 	if ($command =~ m/${command_pattern_add}/) {
 		return add_memo($1, $2);
 	}
@@ -28,45 +28,44 @@ sub parse_command {
 }
 
 sub add_memo {
-	my $title = sanitize(shift);
-	my $text = sanitize(shift);
-	if (!length($title) || !length($text)) {
-		return 'usage: @add <title>: <text>';
+	my $term = sanitize_string(shift);
+	my $description = sanitize_string(shift);
+	if (!length($term) || !length($description)) {
+		return 'usage: @add <term> <description>';
 	}
-	if (find_memo($title)) {
+	if (find_memo($term)) {
 		return 'already exists';
 	}
-	return write_file(DICT_FILENAME, "$title\t$text\n");
+	return write_file(DICT_FILENAME, "$term\t$description\n");
 }
 
 sub write_file {
-	my $filename = sanitize(shift);
-	my $text = sanitize(shift);
+	my $filename = sanitize_string(shift);
+	my $description = sanitize_string(shift);
 	if (!length($filename)) {
 		die("No filename provided.\n");
 	}
-	if (!length($text)) {
-		die("No text provided.\n");
+	if (!length($description)) {
+		die("No description provided.\n");
 	}
 	open(FILE, '>>', $filename);
-	print FILE "$text\n";
+	print FILE "$description\n";
 	close(FILE);
 	return "Done.";
 }
 
 sub find_memo {
-	my $term = sanitize(shift);
+	my $term = sanitize_string(shift);
 	my @memos = read_file(DICT_FILENAME);
 	for my $memo (@memos) {
 		if ($memo =~ m/^${term}\t+(.+)$/gmi) {
 			return $1;
 		}
 	}
-	return undef;
 }
 
 sub read_file {
-	my $filename = sanitize(shift);
+	my $filename = sanitize_string(shift);
 	if (!length($filename)) {
 		die("No filename provided.\n");
 	}
@@ -82,11 +81,11 @@ sub is_command {
 	return ($query =~ m/^@\w+/);
 }
 
-sub sanitize {
-	my $query = shift;
-	$query =~ s/^\s+|\s+$//;
-	$query =~ s/\s{2,}//gi;
-	return $query;
+sub sanitize_string {
+	my $string = shift;
+	$string =~ s/^\s+|\s+$//;
+	$string =~ s/\s{2,}//gi;
+	return $string;
 }
 
 1;
