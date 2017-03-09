@@ -3,6 +3,8 @@ package memorobot;
 use strict;
 use warnings;
 
+use URI::Escape;
+
 my $DICT_PATH = 'dict.tsv';
 my $OBEY_PATH = 'obey.tsv';
 
@@ -89,10 +91,11 @@ sub remove_memo {
 	if (!find_memo($term)) {
 		return "No such thing as '$term'";
 	}
+	my $escaped_term = escape_weird_stuff($term);
 	my @memos = get_memos();
 	my @new_memos;
 	for my $memo (@memos) {
-		if ($memo !~ m/^${term}\t/i) {
+		if ($memo !~ m/^${escaped_term}\t/i) {
 			push(@new_memos, $memo);
 		}
 	}
@@ -108,14 +111,15 @@ sub add_memo {
 	if (find_memo($term)) {
 		return "'$term' already exists";
 	}
+	my $escaped_term = escape_weird_stuff($term);
 	open(DICT_FILE, '>>', get_dict_path());
-	print DICT_FILE "$term\t$text\n";
+	print DICT_FILE "$escaped_term\t$text\n";
 	close(DICT_FILE);
 	return "Added '$term'";
 }
 
 sub find_memo {
-	my $term = sanitize_string(shift);
+	my $term = escape_weird_stuff(sanitize_string(shift));
 	if (!length($term)) {
 		return 'Usage: <my nickname> <word>';
 	}
@@ -137,14 +141,14 @@ sub get_memos {
 }
 
 sub remove_supervisor {
-	my $nickname = sanitize_string(shift);
+	my $nickname = escape_weird_stuff(sanitize_string(shift));
 	if (!find_supervisor($nickname)) {
 		return "$nickname is not my supervisor";
 	}
 	my @supervisors = get_supervisors();
 	my @new_supervisors;
 	for my $supervisor (@supervisors) {
-		if ($nickname ne sanitize_string($supervisor)) {
+		if ($nickname ne escape_weird_stuff(sanitize_string($supervisor))) {
 			push(@new_supervisors, $supervisor);
 		}
 	}
@@ -155,7 +159,7 @@ sub remove_supervisor {
 }
 
 sub add_supervisor {
-	my $nickname = sanitize_string(shift);
+	my $nickname = escape_weird_stuff(sanitize_string(shift));
 	if (!length($nickname)) {
 		return 'Can\'t obey nobody';
 	}
@@ -169,13 +173,13 @@ sub add_supervisor {
 }
 
 sub find_supervisor {
-	my $nickname = sanitize_string(shift);
+	my $nickname = escape_weird_stuff(sanitize_string(shift));
 	if (!length($nickname)) {
 		return;
 	}
 	my @supervisors = get_supervisors();
 	for my $supervisor (@supervisors) {
-		if ($nickname eq sanitize_string($supervisor)) {
+		if ($nickname eq escape_weird_stuff(sanitize_string($supervisor))) {
 			return $supervisor;
 		}
 	}
@@ -193,6 +197,10 @@ sub get_supervisors {
 sub is_command {
 	my $query = shift;
 	return ($query =~ m/^@\w+/);
+}
+
+sub escape_weird_stuff {
+	return uri_escape(shift);
 }
 
 sub sanitize_string {
