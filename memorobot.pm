@@ -141,14 +141,15 @@ sub get_memos {
 }
 
 sub remove_supervisor {
-	my $nickname = escape_weird_stuff(sanitize_string(shift));
+	my $nickname = sanitize_string(shift);
 	if (!find_supervisor($nickname)) {
 		return "$nickname is not my supervisor";
 	}
+	my $escaped_nickname = escape_weird_stuff($nickname);
 	my @supervisors = get_supervisors();
 	my @new_supervisors;
 	for my $supervisor (@supervisors) {
-		if ($nickname ne escape_weird_stuff(sanitize_string($supervisor))) {
+		if (sanitize_string($supervisor) ne $escaped_nickname) {
 			push(@new_supervisors, $supervisor);
 		}
 	}
@@ -159,15 +160,16 @@ sub remove_supervisor {
 }
 
 sub add_supervisor {
-	my $nickname = escape_weird_stuff(sanitize_string(shift));
+	my $nickname = sanitize_string(shift);
 	if (!length($nickname)) {
 		return 'Can\'t obey nobody';
 	}
 	if (find_supervisor($nickname)) {
 		return "$nickname is already my supervisor";
 	}
+	my $escaped_nickname = escape_weird_stuff($nickname);
 	open(OBEY_FILE, '>>', get_obey_path());
-	print OBEY_FILE "$nickname\n";
+	print OBEY_FILE "$escaped_nickname\n";
 	close(OBEY_FILE);
 	return "$nickname is now my supervisor";
 }
@@ -179,7 +181,7 @@ sub find_supervisor {
 	}
 	my @supervisors = get_supervisors();
 	for my $supervisor (@supervisors) {
-		if ($nickname eq escape_weird_stuff(sanitize_string($supervisor))) {
+		if (sanitize_string($supervisor) eq $nickname) {
 			return $supervisor;
 		}
 	}
