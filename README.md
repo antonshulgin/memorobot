@@ -53,22 +53,22 @@ colors	https://en.wikipedia.org/wiki/List_of_colors_(compact)
 
 ## Commands
 
-### @add <term> <text>
+### `@add <term> <text>`
 
 Add new snippet. The `term` is a single word by addressing which the `text` gets recalled.
 
-### @remove <term>
+### `@remove <term>`
 
 Remove a snippet associated with `term`.
 
-### @update <term> <text>
+### `@update <term> <text>`
 
 Soon.
 
-### @obey <nickname>
+### `@obey <nickname>`
 
 Allow `nickname` to execute commands.
 
-### @disobey <nickname>
+### `@disobey <nickname>`
 
 Remove `nickname` from `obey.tsv`, meaning `nickname` cannot use commands anymore.
