@@ -1,6 +1,6 @@
 # memorobot
 
-IRC bot that stores and posts snippets of text. Can be used for bookmarking stuff, or as a dictionary.
+IRC bot that stores and recalls snippets of text. Can be used to bookmark stuff, as a dictionary, or whatever.
 
 ## Usage
 
@@ -8,7 +8,7 @@ IRC bot that stores and posts snippets of text. Can be used for bookmarking 
 $ perl memorobot.pl <server> <port> <nickname> "<#channel1,#channel2,#etc>" [./path/to/obey.tsv] [./path/to/dict.tsv]
 ```
 
-Once the bot joins a channel, it listens for mentions reads a keyword if provided, and posts a snippet associated with said keyword:
+Once the bot joins a channel, it listens for mentions, reads a keyword if provided, and recalls a snippet associated with said keyword:
 
 ```
 <some_irc_user> memorobot: currencies
@@ -52,3 +52,7 @@ record-labels	https://en.wikipedia.org/wiki/List_of_record_labels
 currencies	https://en.wikipedia.org/wiki/List_of_currencies
 colors	https://en.wikipedia.org/wiki/List_of_colors_(compact)
 ```
+
+## Commands
+
+Soon.
