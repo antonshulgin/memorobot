@@ -8,6 +8,9 @@ use URI::Escape;
 my $DICT_PATH = 'dict.tsv';
 my $OBEY_PATH = 'obey.tsv';
 
+my $COMMAND_PREFIX = '@';
+my $USER_COMMAND_PREFIX = '!';
+
 sub get_obey_path {
 	return $OBEY_PATH;
 }
@@ -49,7 +52,33 @@ sub parse_input {
 		}
 		return parse_command($input);
 	}
+	if (is_user_command($input)) {
+		return parse_user_command($input);
+	}
 	return lookup($input);
+}
+
+sub parse_user_command {
+	my $command_string = sanitize_string(shift);
+	if (!length($command_string)) {
+		return 'Nope';
+	}
+	my ($command, $params) = ($command_string =~ m/^${USER_COMMAND_PREFIX}([^\s]+)\s?(.*)$/);
+	# TODO: do the switch or a hash map
+	if ($command eq 'list') { return list_memos($params); }
+	return 'Keine Ahnung.';
+}
+
+sub list_memos {
+	my $params = sanitize_string(shift);
+	my @memos = get_memos();
+	my @terms;
+	my $term;
+	for my $memo (@memos) {
+		($term) = ($memo =~ m/^([^\t]+)/);
+		push(@terms, uri_unescape($term));
+	}
+	return join(", ", @terms);
 }
 
 sub parse_command {
@@ -57,20 +86,12 @@ sub parse_command {
 	if (!length($command_string)) {
 		return 'No';
 	}
-	my ($command, $params) = ($command_string =~ m/^@([^\s]+)\s+(.+)$/);
+	my ($command, $params) = ($command_string =~ m/^${COMMAND_PREFIX}([^\s]+)\s+(.+)$/);
 	# TODO: do the switch or a hash map
-	if ($command eq 'add') {
-		return add_memo($params);
-	}
-	if ($command eq 'remove') {
-		return remove_memo($params);
-	}
-	if ($command eq 'obey') {
-		return add_supervisor($params);
-	}
-	if ($command eq 'disobey') {
-		return remove_supervisor($params);
-	}
+	if ($command eq 'add') { return add_memo($params); }
+	if ($command eq 'remove') { return remove_memo($params); }
+	if ($command eq 'obey') { return add_supervisor($params); }
+	if ($command eq 'disobey') { return remove_supervisor($params); }
 	return 'No comprendo, amigo';
 }
 
@@ -196,9 +217,14 @@ sub get_supervisors {
 	return @supervisors;
 }
 
+sub is_user_command {
+	my $query = shift;
+	return ($query =~ m/^${USER_COMMAND_PREFIX}\w+/);
+}
+
 sub is_command {
 	my $query = shift;
-	return ($query =~ m/^@\w+/);
+	return ($query =~ m/^${COMMAND_PREFIX}\w+/);
 }
 
 sub escape_weird_stuff {
