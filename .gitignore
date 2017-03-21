@@ -1,5 +1,5 @@
 .DS_Store
 dict.tsv
 obey.tsv
-memorobot-cli.pl
+cli.pl
 run.sh
