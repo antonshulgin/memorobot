@@ -118,7 +118,7 @@ sub remove_memo {
 	if (!find_memo($term)) {
 		return "No such thing as '$term'";
 	}
-	my $escaped_term = escape_weird_stuff($term);
+	my $escaped_term = uri_escape($term);
 	my @memos = get_memos();
 	my @new_memos;
 	for my $memo (@memos) {
@@ -138,7 +138,7 @@ sub add_memo {
 	if (find_memo($term)) {
 		return "'$term' already exists";
 	}
-	my $escaped_term = escape_weird_stuff($term);
+	my $escaped_term = uri_escape($term);
 	open(DICT_FILE, '>>', get_dict_path());
 	print DICT_FILE "$escaped_term\t$text\n";
 	close(DICT_FILE);
@@ -146,7 +146,7 @@ sub add_memo {
 }
 
 sub find_memo {
-	my $term = escape_weird_stuff(sanitize_string(shift));
+	my $term = uri_escape(sanitize_string(shift));
 	if (!length($term)) {
 		return 'Usage: <my nickname> <word>';
 	}
@@ -172,7 +172,7 @@ sub remove_supervisor {
 	if (!find_supervisor($nickname)) {
 		return "$nickname is not my supervisor";
 	}
-	my $escaped_nickname = escape_weird_stuff($nickname);
+	my $escaped_nickname = uri_escape($nickname);
 	my @supervisors = get_supervisors();
 	my @new_supervisors;
 	for my $supervisor (@supervisors) {
@@ -194,7 +194,7 @@ sub add_supervisor {
 	if (find_supervisor($nickname)) {
 		return "$nickname is already my supervisor";
 	}
-	my $escaped_nickname = escape_weird_stuff($nickname);
+	my $escaped_nickname = uri_escape($nickname);
 	open(OBEY_FILE, '>>', get_obey_path());
 	print OBEY_FILE "$escaped_nickname\n";
 	close(OBEY_FILE);
@@ -202,7 +202,7 @@ sub add_supervisor {
 }
 
 sub find_supervisor {
-	my $nickname = escape_weird_stuff(sanitize_string(shift));
+	my $nickname = uri_escape(sanitize_string(shift));
 	if (!length($nickname)) {
 		return;
 	}
@@ -231,10 +231,6 @@ sub is_user_command {
 sub is_command {
 	my $query = shift;
 	return ($query =~ m/^${COMMAND_PREFIX}\w+/);
-}
-
-sub escape_weird_stuff {
-	return uri_escape(shift);
 }
 
 sub sanitize_string {
