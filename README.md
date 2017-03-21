@@ -1,6 +1,8 @@
 # memorobot
 
-IRC bot that stores and recalls snippets of text. Can be used to bookmark stuff, as a dictionary, or whatever.
+This IRC bot stores and recalls snippets of text. Can be used to bookmark stuff, as a dictionary, or whatever.
+
+----
 
 ## Usage
 
@@ -12,11 +14,10 @@ This shell script will run the bot, connect to Freenode, and listen for ment
 
 ```bash
 #!/bin/bash
-
 perl ./memorobot.pl chat.freenode.org 6665 memorobot "#angularjs" ./obey.tsv ./dict.tsv
 ```
 
-Once the bot joins a channel, it listens for mentions, reads a keyword if provided, and recalls a snippet associated with said keyword:
+Once the bot joined a channel, it starts listening for mentions, reads a keyword if provided, and recalls a snippet associated with said keyword:
 
 ```
 <some_user> memorobot: currencies
@@ -25,31 +26,30 @@ Once the bot joins a channel, it listens for mentions, reads a keyword if provi
 <memorobot> You are not my supervisor
 ```
 
+---
+
 ## obey.tsv
 
 A list of nicknames allowed to use supervisor commands.
 
-### Example
-
-This will allow the user `WhatTheDilly` to use supervisor commands:
-
 ```tsv
 WhatTheDilly
 ```
+This will allow the user `WhatTheDilly` to use supervisor commands:
+
+---
 
 ## dict.tsv
 
-List of snippets in [TSV format](https://en.wikipedia.org/wiki/Tab-separated_values).
-
-### Example
-
-This dictionary contains some Wikipedia links:
+List of snippets in [TSV format](https://en.wikipedia.org/wiki/Tab-separated_values). This example contains some Wikipedia links:
 
 ```tsv
 record-labels	https://en.wikipedia.org/wiki/List_of_record_labels
 currencies	https://en.wikipedia.org/wiki/List_of_currencies
 colors	https://en.wikipedia.org/wiki/List_of_colors_(compact)
 ```
+
+---
 
 ## Supervisor commands
 
@@ -74,6 +74,8 @@ Allow `nickname` to execute supervisor commands.
 ### `@disobey <nickname>`
 
 Remove `nickname` from `obey.tsv`, meaning `nickname` cannot use supervisor commands anymore.
+
+---
 
 ## User commands
 
