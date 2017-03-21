@@ -65,7 +65,7 @@ Remove a snippet associated with `term`.
 
 ### `@update <term> <text>`
 
-Soon.
+Update snippet's text.
 
 ### `@obey <nickname>`
 
