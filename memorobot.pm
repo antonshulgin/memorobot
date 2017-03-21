@@ -65,7 +65,12 @@ sub parse_user_command {
 	}
 	my ($command, $params) = ($command_string =~ m/^${USER_COMMAND_PREFIX}([^\s]+)\s?(.*)$/);
 	if ($command eq 'list') { return list_terms($params); }
-	return 'Keine Ahnung.';
+	if ($command eq 'help') { return send_help(); }
+	return 'Nie rozumiem';
+}
+
+sub send_help {
+	return 'Everything you ever wanted to know but were too afraid to ask: https://github.com/antonshulgin/memorobot';
 }
 
 sub list_terms {

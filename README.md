@@ -82,3 +82,7 @@ These commands can be executed by anyone.
 ### `!list [first letter(s)]`
 
 Lists terms that match the pattern. If no pattern provided, and there aren't too many memos, dumps all it got.
+
+### `!help`
+
+Links this repo.
