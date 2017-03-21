@@ -44,7 +44,7 @@ sub parse_input {
 	my $input = sanitize_string(shift);
 	my $sender = sanitize_string(shift);
 	if (!length($input)) {
-		return 'No stuff to parse';
+		return 'Give me a word';
 	}
 	if (is_command($input)) {
 		if (!find_supervisor($sender)) {
@@ -99,6 +99,7 @@ sub parse_command {
 	my ($command, $params) = ($command_string =~ m/^${COMMAND_PREFIX}([^\s]+)\s+(.+)$/);
 	# TODO: do the switch or a hash map
 	if ($command eq 'add') { return add_memo($params); }
+	if ($command eq 'update') { return update_memo($params); }
 	if ($command eq 'remove') { return remove_memo($params); }
 	if ($command eq 'obey') { return add_supervisor($params); }
 	if ($command eq 'disobey') { return remove_supervisor($params); }
@@ -112,15 +113,18 @@ sub lookup {
 	}
 	my $memo = find_memo($term);
 	if (!$memo) {
-		return "No such thing as '$term'";
+		return "No such thing as `$term`";
 	}
 	return $memo;
 }
 
 sub remove_memo {
 	my $term = sanitize_string(shift);
+	if (!length($term)) {
+		return 'Usage: @remove <term>'
+	}
 	if (!find_memo($term)) {
-		return "No such thing as '$term'";
+		return "No such thing as `$term`";
 	}
 	my $escaped_term = uri_escape($term);
 	my @memos = get_memos();
@@ -133,20 +137,51 @@ sub remove_memo {
 	open(DICT_FILE, '>', get_dict_path());
 	print DICT_FILE @new_memos;
 	close(DICT_FILE);
-	return "Removed '$term'";
+	return "Removed `$term`";
+}
+
+sub update_memo {
+	my $params = sanitize_string(shift);
+	my ($term, $text) = ($params =~ m/^([^\s]+)\s+(.+)$/i);
+	$term = sanitize_string($term);
+	$text = sanitize_string($text);
+	if (!length($text)) {
+		return 'Usage: @update <term> <text>';
+	}
+	if (!find_memo($term)) {
+		return "`$term` doesn't exist";
+	}
+	my $escaped_term = uri_escape($term);
+	my @memos = get_memos();
+	my @new_memos;
+	for my $memo (@memos) {
+		if ($memo !~ m/^${escaped_term}\t/i) {
+			push(@new_memos, $memo);
+		}
+	}
+	open(DICT_FILE, '>', get_dict_path());
+	print DICT_FILE @new_memos;
+	print DICT_FILE "$escaped_term\t$text\n";
+	close(DICT_FILE);
+	return "Updated `$term`";
 }
 
 sub add_memo {
 	my $params = sanitize_string(shift);
 	my ($term, $text) = ($params =~ m/^([^\s]+)\s+(.+)$/i);
+	$term = sanitize_string($term);
+	$text = sanitize_string($text);
+	if (!length($text)) {
+		return 'Usage: @add <term> <text>';
+	}
 	if (find_memo($term)) {
-		return "'$term' already exists";
+		return "`$term` already exists";
 	}
 	my $escaped_term = uri_escape($term);
 	open(DICT_FILE, '>>', get_dict_path());
 	print DICT_FILE "$escaped_term\t$text\n";
 	close(DICT_FILE);
-	return "Added '$term'";
+	return "Added `$term`";
 }
 
 sub find_memo {
@@ -239,6 +274,9 @@ sub is_command {
 
 sub sanitize_string {
 	my $string = shift;
+	if (!length($string)) {
+		return;
+	}
 	$string =~ s/^\s+|\n|\r|\s+$//;
 	$string =~ s/\s{2,}//gi;
 	return $string;
