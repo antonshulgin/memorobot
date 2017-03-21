@@ -64,7 +64,6 @@ sub parse_user_command {
 		return 'Nope';
 	}
 	my ($command, $params) = ($command_string =~ m/^${USER_COMMAND_PREFIX}([^\s]+)\s?(.*)$/);
-	# TODO: do the switch or a hash map
 	if ($command eq 'list') { return list_terms($params); }
 	return 'Keine Ahnung.';
 }

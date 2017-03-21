@@ -27,11 +27,11 @@ Once the bot joins a channel, it listens for mentions, reads a keyword if provi
 
 ## obey.tsv
 
-A list of nicknames allowed to use commands.
+A list of nicknames allowed to use supervisor commands.
 
 ### Example
 
-This will allow the user `WhatTheDilly` to use commands:
+This will allow the user `WhatTheDilly` to use supervisor commands:
 
 ```tsv
 WhatTheDilly
@@ -51,7 +51,9 @@ currencies	https://en.wikipedia.org/wiki/List_of_currencies
 colors	https://en.wikipedia.org/wiki/List_of_colors_(compact)
 ```
 
-## Commands
+## Supervisor commands
+
+These commands only can be executed by the nicknames listed in `obey.tsv`.
 
 ### `@add <term> <text>`
 
@@ -67,8 +69,16 @@ Soon.
 
 ### `@obey <nickname>`
 
-Allow `nickname` to execute commands.
+Allow `nickname` to execute supervisor commands.
 
 ### `@disobey <nickname>`
 
-Remove `nickname` from `obey.tsv`, meaning `nickname` cannot use commands anymore.
+Remove `nickname` from `obey.tsv`, meaning `nickname` cannot use supervisor commands anymore.
+
+## User commands
+
+These commands can be executed by anyone.
+
+### `!list [first letter(s)]`
+
+Lists terms that match the pattern. If no pattern provided, and there aren't too many memos, dumps all it got.
