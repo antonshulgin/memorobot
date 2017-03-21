@@ -65,20 +65,26 @@ sub parse_user_command {
 	}
 	my ($command, $params) = ($command_string =~ m/^${USER_COMMAND_PREFIX}([^\s]+)\s?(.*)$/);
 	# TODO: do the switch or a hash map
-	if ($command eq 'list') { return list_memos($params); }
+	if ($command eq 'list') { return list_terms($params); }
 	return 'Keine Ahnung.';
 }
 
-sub list_memos {
-	my $params = sanitize_string(shift);
+sub list_terms {
+	my $pattern = uri_escape(sanitize_string(shift));
 	my @memos = get_memos();
-	my @terms;
-	my $term;
-	for my $memo (@memos) {
-		($term) = ($memo =~ m/^([^\t]+)/);
-		push(@terms, uri_unescape($term));
+	if (!scalar(@memos)) {
+		return 'Got nothing, try @adding some memos first';
 	}
-	return join(", ", @terms);
+	if ((scalar(@memos) > 30) && !length($pattern)) {
+		return 'Too many memos, try `!list <first letter(s)>`';
+	}
+	my $memos_string = join('', @memos);
+	my @matching_terms = ($memos_string =~ m/^(${pattern}[^\t]+)/gmi);
+	if (!scalar(@matching_terms)) {
+		return 'Nothing found';
+	}
+	my $matching_terms_string = join(' :: ', @matching_terms);
+	return uri_unescape(sanitize_string($matching_terms_string));
 }
 
 sub parse_command {
@@ -158,7 +164,7 @@ sub get_memos {
 	open(DICT_FILE, '<', get_dict_path());
 	@memos = <DICT_FILE>;
 	close(DICT_FILE);
-	return @memos;
+	return sort(@memos);
 }
 
 sub remove_supervisor {
