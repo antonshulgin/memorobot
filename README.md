@@ -31,7 +31,7 @@ If a nickname provided, the result will be forwarded to it:
 ```
 <some_user> Semantic UI is semantic!
 <AnotherUser> memorobot: semantic-ui some_user
-<memorobot> some_user No, it isn't - https://news.ycombinator.com/item?id=6381220
+<memorobot> some_user: No, it isn't - https://news.ycombinator.com/item?id=6381220
 ```
 
 ---
