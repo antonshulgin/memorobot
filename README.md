@@ -26,6 +26,14 @@ Once the bot joined a channel, it starts listening for mentions, reads a keywor
 <memorobot> You are not my supervisor
 ```
 
+If a nickname provided, the result will be forwarded to it:
+
+```
+<some_user> Semantic UI is semantic!
+<AnotherUser> memorobot: semantic-ui some_user
+<memorobot> some_user No, it isn't - https://news.ycombinator.com/item?id=6381220
+```
+
 ---
 
 ## obey.tsv

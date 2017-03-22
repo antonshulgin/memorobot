@@ -116,7 +116,7 @@ sub lookup {
 	if (!$memo) {
 		return "No such thing as `$term`";
 	}
-	return !length($nickname) ? $memo : "$nickname, $memo";
+	return !length($nickname) ? $memo : "$nickname: $memo";
 }
 
 sub remove_memo {
