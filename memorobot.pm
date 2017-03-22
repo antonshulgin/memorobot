@@ -107,7 +107,8 @@ sub parse_command {
 }
 
 sub lookup {
-	my $term = sanitize_string(shift);
+	my $input = sanitize_string(shift);
+	my ($term, $nickname) = ($input =~ m/^([^\s]+)\s?(.*)$/i);
 	if (!length($term)) {
 		return 'Usage: <my nickname> <term>';
 	}
@@ -115,7 +116,7 @@ sub lookup {
 	if (!$memo) {
 		return "No such thing as `$term`";
 	}
-	return $memo;
+	return !length($nickname) ? $memo : "$nickname, $memo";
 }
 
 sub remove_memo {
