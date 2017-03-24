@@ -89,9 +89,9 @@ Remove `nickname` from `obey.tsv`, meaning `nickname` cannot use supervisor comm
 
 These commands can be executed by anyone.
 
-### `!list [first letter(s)]`
+### `!list [substring]`
 
-Lists terms that match the pattern. If no pattern provided, and there aren't too many memos, dumps all it got.
+Lists terms that match the substring. If no substring provided, and there aren't too many memos, dumps all it got.
 
 ### `!help`
 

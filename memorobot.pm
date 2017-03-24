@@ -78,15 +78,21 @@ sub send_help {
 
 sub list_terms {
 	my $pattern = uri_escape(sanitize_string(shift));
+	my $is_pattern_empty = !length($pattern);
 	my @memos = get_memos();
 	if (!scalar(@memos)) {
 		return 'Got nothing, try @adding some memos first';
 	}
-	if ((scalar(@memos) > 30) && !length($pattern)) {
+	if ((scalar(@memos) > 30) && $is_pattern_empty) {
 		return 'Too many memos, try `!list <first letter(s)>`';
 	}
 	my $memos_string = join('', @memos);
-	my @matching_terms = ($memos_string =~ m/^(${pattern}[^\t]+)/gmi);
+	my @matching_terms;
+	if ($is_pattern_empty) {
+		@matching_terms = ($memos_string =~ m/^([^\t]+)/gmi);
+	} else {
+		@matching_terms = ($memos_string =~ m/^([^\t]*${pattern}[^\t]*)/gmi);
+	}
 	if (!scalar(@matching_terms)) {
 		return 'Nothing found';
 	}
