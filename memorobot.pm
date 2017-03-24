@@ -138,10 +138,10 @@ sub remove_memo {
 			push(@new_memos, $memo);
 		}
 	}
-	cache_memos(@new_memos);
 	open(DICT_FILE, '>', get_dict_path());
-	print DICT_FILE get_memos();
+	print DICT_FILE @new_memos;
 	close(DICT_FILE);
+	cache_memos(read_memos());
 	return "Removed `$term`";
 }
 
@@ -164,11 +164,11 @@ sub update_memo {
 			push(@new_memos, $memo);
 		}
 	}
-	cache_memos(@new_memos);
 	open(DICT_FILE, '>', get_dict_path());
-	print DICT_FILE get_memos();
+	print DICT_FILE @new_memos;
 	print DICT_FILE "$escaped_term\t$text\n";
 	close(DICT_FILE);
+	cache_memos(read_memos());
 	return "Updated `$term`";
 }
 
@@ -241,10 +241,10 @@ sub remove_supervisor {
 			push(@new_supervisors, $supervisor);
 		}
 	}
-	cache_supervisors(@new_supervisors);
 	open(OBEY_FILE, '>', get_obey_path());
-	print OBEY_FILE get_supervisors();
+	print OBEY_FILE @new_supervisors;
 	close(OBEY_FILE);
+	cache_supervisors(read_supervisors());
 	return "$nickname is no longer my supervisor";
 }
 
@@ -260,7 +260,7 @@ sub add_supervisor {
 	open(OBEY_FILE, '>>', get_obey_path());
 	print OBEY_FILE "$escaped_nickname\n";
 	close(OBEY_FILE);
-	cache_supervisors(get_supervisors());
+	cache_supervisors(read_supervisors());
 	return "$nickname is now my supervisor";
 }
 
