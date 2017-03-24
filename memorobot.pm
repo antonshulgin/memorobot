@@ -12,6 +12,7 @@ my $COMMAND_PREFIX = '@';
 my $USER_COMMAND_PREFIX = '!';
 
 my @CACHED_MEMOS;
+my @CACHED_SUPERVISORS;
 
 sub get_obey_path {
 	return $OBEY_PATH;
@@ -186,6 +187,7 @@ sub add_memo {
 	open(DICT_FILE, '>>', get_dict_path());
 	print DICT_FILE "$escaped_term\t$text\n";
 	close(DICT_FILE);
+	cache_memos(read_memos());
 	return "Added `$term`";
 }
 
@@ -214,6 +216,7 @@ sub get_memos {
 
 sub init {
 	cache_memos(read_memos());
+	cache_supervisors(read_supervisors());
 }
 
 sub read_memos {
@@ -238,8 +241,9 @@ sub remove_supervisor {
 			push(@new_supervisors, $supervisor);
 		}
 	}
+	cache_supervisors(@new_supervisors);
 	open(OBEY_FILE, '>', get_obey_path());
-	print OBEY_FILE @new_supervisors;
+	print OBEY_FILE get_supervisors();
 	close(OBEY_FILE);
 	return "$nickname is no longer my supervisor";
 }
@@ -256,6 +260,7 @@ sub add_supervisor {
 	open(OBEY_FILE, '>>', get_obey_path());
 	print OBEY_FILE "$escaped_nickname\n";
 	close(OBEY_FILE);
+	cache_supervisors(get_supervisors());
 	return "$nickname is now my supervisor";
 }
 
@@ -273,12 +278,21 @@ sub find_supervisor {
 	return;
 }
 
-sub get_supervisors {
+sub cache_supervisors {
+	my @supervisors = @_;
+	@CACHED_SUPERVISORS = sort(@supervisors);
+}
+
+sub read_supervisors {
 	my @supervisors;
 	open(OBEY_FILE, '<', get_obey_path());
 	@supervisors = <OBEY_FILE>;
 	close(OBEY_FILE);
 	return @supervisors;
+}
+
+sub get_supervisors {
+	return @CACHED_SUPERVISORS;
 }
 
 sub is_user_command {

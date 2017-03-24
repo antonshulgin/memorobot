@@ -20,6 +20,7 @@ sub init {
 	my $dict_path = shift;
 	memorobot->set_dict_path($dict_path);
 	memorobot->set_obey_path($obey_path);
+	memorobot->init();
 	my $socket = IO::Socket::INET->new(
 		PeerAddr => $server,
 		PeerPort => $port,
