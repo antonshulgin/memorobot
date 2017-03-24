@@ -11,6 +11,8 @@ my $OBEY_PATH = 'obey.tsv';
 my $COMMAND_PREFIX = '@';
 my $USER_COMMAND_PREFIX = '!';
 
+my @CACHED_MEMOS;
+
 sub get_obey_path {
 	return $OBEY_PATH;
 }
@@ -135,8 +137,9 @@ sub remove_memo {
 			push(@new_memos, $memo);
 		}
 	}
+	cache_memos(@new_memos);
 	open(DICT_FILE, '>', get_dict_path());
-	print DICT_FILE @new_memos;
+	print DICT_FILE get_memos();
 	close(DICT_FILE);
 	return "Removed `$term`";
 }
@@ -160,8 +163,9 @@ sub update_memo {
 			push(@new_memos, $memo);
 		}
 	}
+	cache_memos(@new_memos);
 	open(DICT_FILE, '>', get_dict_path());
-	print DICT_FILE @new_memos;
+	print DICT_FILE get_memos();
 	print DICT_FILE "$escaped_term\t$text\n";
 	close(DICT_FILE);
 	return "Updated `$term`";
@@ -199,12 +203,26 @@ sub find_memo {
 	return;
 }
 
+sub cache_memos {
+	my @memos = @_;
+	@CACHED_MEMOS = sort(@memos);
+}
+
 sub get_memos {
+	return @CACHED_MEMOS;
+}
+
+sub init {
+	cache_memos(read_memos());
+}
+
+sub read_memos {
+	print('Reading memos from ' . get_dict_path() . "\n");
 	my @memos;
 	open(DICT_FILE, '<', get_dict_path());
 	@memos = <DICT_FILE>;
 	close(DICT_FILE);
-	return sort(@memos);
+	return @memos;
 }
 
 sub remove_supervisor {
