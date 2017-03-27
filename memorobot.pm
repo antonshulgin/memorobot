@@ -225,6 +225,13 @@ sub init {
 	cache_supervisors(read_supervisors());
 }
 
+sub write_memos {
+	my @memos = @_;
+	open(DICT_FILE, '>', get_dict_path());
+	@memos = <DICT_FILE>;
+	close(DICT_FILE);
+}
+
 sub read_memos {
 	print('Reading memos from ' . get_dict_path() . "\n");
 	my @memos;
