@@ -168,10 +168,8 @@ sub update_memo {
 			push(@new_memos, $memo);
 		}
 	}
-	open(DICT_FILE, '>', get_dict_path());
-	print DICT_FILE @new_memos;
-	print DICT_FILE "$escaped_term\t$text\n";
-	close(DICT_FILE);
+	push(@new_memos, "$escaped_term\t$text\n");
+	write_memos(@new_memos);
 	cache_memos(read_memos());
 	return "Updated `$term`";
 }
