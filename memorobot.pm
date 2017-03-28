@@ -144,9 +144,7 @@ sub remove_memo {
 			push(@new_memos, $memo);
 		}
 	}
-	open(DICT_FILE, '>', get_dict_path());
-	print DICT_FILE @new_memos;
-	close(DICT_FILE);
+	write_memos(@new_memos);
 	cache_memos(read_memos());
 	return "Removed `$term`";
 }
