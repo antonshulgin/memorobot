@@ -186,9 +186,9 @@ sub add_memo {
 		return "`$term` already exists";
 	}
 	my $escaped_term = uri_escape($term);
-	open(DICT_FILE, '>>', get_dict_path());
-	print DICT_FILE "$escaped_term\t$text\n";
-	close(DICT_FILE);
+	my @memos = get_memos();
+	push(@memos, "$escaped_term\t$text\n");
+	write_memos(@memos);
 	cache_memos(read_memos());
 	return "Added `$term`";
 }
