@@ -145,7 +145,6 @@ sub remove_memo {
 		}
 	}
 	write_memos(@new_memos);
-	cache_memos(read_memos());
 	return "Removed `$term`";
 }
 
@@ -170,7 +169,6 @@ sub update_memo {
 	}
 	push(@new_memos, "$escaped_term\t$text\n");
 	write_memos(@new_memos);
-	cache_memos(read_memos());
 	return "Updated `$term`";
 }
 
@@ -189,7 +187,6 @@ sub add_memo {
 	my @memos = get_memos();
 	push(@memos, "$escaped_term\t$text\n");
 	write_memos(@memos);
-	cache_memos(read_memos());
 	return "Added `$term`";
 }
 
@@ -226,6 +223,7 @@ sub write_memos {
 	open(DICT_FILE, '>', get_dict_path());
 	@memos = <DICT_FILE>;
 	close(DICT_FILE);
+	cache_memos(read_memos());
 }
 
 sub read_memos {
