@@ -248,10 +248,7 @@ sub remove_supervisor {
 			push(@new_supervisors, $supervisor);
 		}
 	}
-	open(OBEY_FILE, '>', get_obey_path());
-	print OBEY_FILE @new_supervisors;
-	close(OBEY_FILE);
-	cache_supervisors(read_supervisors());
+	write_supervisors(@new_supervisors);
 	return "$nickname is no longer my supervisor";
 }
 
@@ -264,10 +261,9 @@ sub add_supervisor {
 		return "$nickname is already my supervisor";
 	}
 	my $escaped_nickname = uri_escape($nickname);
-	open(OBEY_FILE, '>>', get_obey_path());
-	print OBEY_FILE "$escaped_nickname\n";
-	close(OBEY_FILE);
-	cache_supervisors(read_supervisors());
+	my @supervisors = get_supervisors();
+	push(@supervisors, "$escaped_nickname\n");
+	write_supervisors(@supervisors);
 	return "$nickname is now my supervisor";
 }
 
@@ -283,6 +279,14 @@ sub find_supervisor {
 		}
 	}
 	return;
+}
+
+sub write_supervisors {
+	my @supervisors = @_;
+	open(OBEY_FILE, '>', get_obey_path());
+	print OBEY_FILE @supervisors;
+	close(OBEY_FILE);
+	cache_supervisors(read_supervisors());
 }
 
 sub cache_supervisors {
