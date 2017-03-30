@@ -221,7 +221,7 @@ sub init {
 sub write_memos {
 	my @memos = @_;
 	open(DICT_FILE, '>', get_dict_path());
-	@memos = <DICT_FILE>;
+	print DICT_FILE @memos;
 	close(DICT_FILE);
 	cache_memos(read_memos());
 }
